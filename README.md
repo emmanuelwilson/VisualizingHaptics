@@ -3,8 +3,11 @@
 The python code provided can be used to simulate and visualise static haptic effects and interactions in 2D and 3D.
 Still a WIP and can only be applied on round objects for now. Additional functionality will be added. 
 
+## 2D Visualization: 
+![alt text](https://github.com/emmanuelwilson/VisualizingHaptics/blob/main/2Drepresentation.PNG)
 
-
+## 3D Visualization: 
+![alt text](https://github.com/emmanuelwilson/VisualizingHaptics/blob/main/3Drepresentation.gif)
 
 ## Forces: 
 
