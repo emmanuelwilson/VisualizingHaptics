@@ -226,17 +226,14 @@ def findCircleCircumferenceFrictionOrdered(friction, Xc,Yc,rx,ry, tilt = 0):
           break
 
     circleIndOrdered = np.concatenate((yInd.reshape(len(yInd),1),xInd.reshape(len(xInd),1)),axis=1)
-    # plt.figure(55)
-    # plt.plot(circleIndOrdered[:,0])
-    # plt.figure(56)
-    # plt.plot(circleIndOrdered[:,1])
 
     frictionMap = friction[circleIndOrdered[:,0],circleIndOrdered[:,1]]
     return circleIndOrdered, frictionMap
 
 # Calculate the force direction and amplitude based on the end effector position and heading
 # INPUT: haplyBoard, device, force amplitude, force direction
-# OUTPUT: Will apply forces onto the 2DIY
+# OUTPUT: Will apply forces onto the 2DIY 
+#-----------------NOT IN WORKING ORDER YET----------------
 def applyForces(haplyBoard,device, forceAmp,forceDir, frictionForces):
     if (haplyBoard.data_available()):
             device.device_read_data()
@@ -336,9 +333,6 @@ def addFriction(friction1,friction2):
 # INPUT: width height of the workspace and Friction map at that pixel
 # OUTPUT: friction color values of the same size as X
 def cMap(ind,friction):
-    #
-    # for x in range(width):
-    #     for y in range(height):
     c = plt.cm.autumn_r((np.clip(friction[ind[1], ind[0]], 0, 1)))
 
     return c
@@ -394,27 +388,6 @@ def main():
     # frictionColor = frictionCircum / np.max(frictionCircum)
     frictionColor = cMap(ind,frictionForces)
 
-    #plot forces:
-    # plt.figure(0)
-    # plt.imshow(forceSpring)
-    # plt.colorbar()
-    # plt.title("Spring Force Amplitude")
-    #
-    # plt.figure(1)
-    # plt.imshow(frictionForces)
-    # plt.colorbar()
-    # plt.title("Friction coefficient")
-    #
-    # plt.figure(3)
-    # plt.scatter(textCircleCentroids[:,1],textCircleCentroids[:,0],alpha=textCircleAlpha,marker='X')
-    # plt.colorbar()
-    # plt.title("Texture Force Amplitude")
-    #
-    # plt.figure(6)
-    # plt.imshow(forceAmp)
-    # plt.colorbar()
-    # plt.title("Spring and Texture Force Amplitude")
-
     # Condensed quiver plot
     quiverDirX = skimage.measure.block_reduce(forceDir[:,1].reshape(height,width), block_size=(int((height)/(quiverH)),int((width)/(quiverW))), func = np.mean).reshape(quiverW*quiverH,1)
     quiverDirY = skimage.measure.block_reduce(forceDir[:,0].reshape(height,width), block_size=(int((height)/(quiverH)),int((width)/(quiverW))), func = np.mean).reshape(quiverW*quiverH,1)
@@ -423,10 +396,6 @@ def main():
 
     indQ1 = skimage.measure.block_reduce(ind[1].reshape(height,width), block_size=(int((height)/(quiverH)),int((width)/(quiverW))), func = np.median)#.reshape(quiverW*quiverH,1)
     indQ2 = skimage.measure.block_reduce(ind[0].reshape(height,width), block_size=(int((height)/(quiverH)),int((width)/(quiverW))), func = np.median)#.reshape(quiverW*quiverH,1)
-
-    # plt.figure(2)
-    # quiverPlot = plt.quiver(indQ1,indQ2,quiverDir[:,1],quiverDir[:,0],pivot = 'mid', width = 0.01,units ='inches')
-    # plt.title("Force Direction")
 
     fig2, ax2 = plt.subplots()
     ax2.set_title("2D Representation")
@@ -438,21 +407,6 @@ def main():
     fig2.colorbar(V, ax=ax2)
     fig2.colorbar(C, ax=ax2)
 
-    # plt.figure(5)
-    # gradientForces = np.abs(np.gradient(forceAmp))
-    # plt.imshow(np.mean(gradientForces,axis=0).reshape(height,width))
-    # plt.colorbar()
-    # plt.title("Force Gradient")
-
-    # plt.figure(4)
-    # masked_data = np.ma.masked_where(textCircleAmp > 0, forceAmp)
-    # fig3, ax = plt.subplots()
-    # F = ax.imshow(forceAmp,cmap=cm.hot)
-    # F2 = ax.imshow(masked_data, interpolation='none')
-    # fig3.colorbar(F, ax=ax)
-    # fig3.colorbar(F2, ax=ax)
-    # ax.set_title("Force Amplitude with Two Colormaps")
-
     ## 3D Surface plots ##
 
     fig = mlab.figure(10)
@@ -460,22 +414,6 @@ def main():
     # mlab.surf(forceAmpSign, warp_scale='auto', colormap='black-white')
     mlab.points3d(textCircleCentroids2[:, 0], textCircleCentroids2[:, 1], textAmp2 * 50 + 10, colormap='Oranges',opacity=textCircleAlpha2)
     mlab.points3d(textCircleCentroids[:, 0], textCircleCentroids[:, 1], textAmp * 50 + 2, colormap='Oranges',opacity=textCircleAlpha)
-
-    # Friction contour:
-    # mlab.plot3d(circleCircum1[:,0],circleCircum1[:,1],forceAmpSign[circleCircum1[:, 0], circleCircum1[:, 1]] * 50 + 10,frictionCircum1,tube_radius=1,colormap='cool')
-    # mlab.plot3d(circleCircum2[:, 0], circleCircum2[:, 1], forceAmpSign[circleCircum2[:, 0], circleCircum2[:, 1]] * 50 + 10, frictionCircum2, tube_radius=1, colormap='cool')
-    # mlab.plot3d(ellipseCircum[:, 0], ellipseCircum[:, 1], forceAmpSign[ellipseCircum[:, 0], ellipseCircum[:, 1]] * 50 + 10, frictionCircum3, tube_radius=1, colormap='cool')
-
-
-    # print(np.shape(forceAmpSign))
-    # print(np.shape(frictionColor))
-    # print(np.shape(ind[1].reshape(width*height,1)))
-    # print(np.shape(ind[0].reshape(width*height,1)))
-    # print(np.shape(forceAmpSign[ind[1],ind[0]].reshape(width*height,1)))
-    # print(np.shape(frictionColor[ind[1], ind[0], :].reshape(width*height,4)))
-    # print(np.shape(frictionForces))
-    # mlab.figure()
-    # mlab.mesh(ind[1], ind[0], forceAmpSign[ind[1],ind[0]]*50, scalars=frictionForces[ind[1],ind[0]], colormap="cool")
 
     plt.show()
     mlab.show()
